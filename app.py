@@ -1,12 +1,14 @@
 import streamlit as st
 import joblib
 
-# Load your trained model
-model = joblib.load('spam_classifier.pkl')  # Make sure this file exists
+# Load your trained model and vectorizer
+model = joblib.load('spam_classifier.pkl')  # Ensure this file exists
+vectorizer = joblib.load('vectorizer.pkl')  # Load the vectorizer used in training
 
 # Function to predict spam
 def predict_spam(email_text):
-    prediction = model.predict([email_text])
+    email_vectorized = vectorizer.transform([email_text])  # Transform input text
+    prediction = model.predict(email_vectorized)  # Predict using the trained model
     return "Spam" if prediction[0] == 1 else "Not Spam"
 
 # Streamlit UI
@@ -22,4 +24,5 @@ if st.button("Check Spam"):
         result = predict_spam(email_text)
         st.success(f"Prediction: **{result}**")
     else:
-        st.warning("Please enter an email text to classify.")
+        st.warning("Please enter an email text to classify.")  
+
